@@ -1,0 +1,10 @@
+name: OpsReporting
+version: "1.0"
+main: net.cubeops.opsreporting.client.OpsReportingClient
+api-version: "1.18"
+author: creativeuniverse
+commands:
+  serverproblem:
+    usage: "§cNo permission"
+softdepend:
+  - spark
