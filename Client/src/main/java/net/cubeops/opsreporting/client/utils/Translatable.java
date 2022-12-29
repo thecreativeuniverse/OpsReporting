@@ -44,6 +44,7 @@ public class Translatable {
         File file = getFile(DEFAULT_LANG);
         if (!file.exists()) {
             try {
+                System.out.println(file.getAbsolutePath()); //debugging
                 file.createNewFile();
                 String defaultFile = String.format("%clang%c%s.yml", File.separatorChar, File.separatorChar, DEFAULT_LANG); //debugging
                 try (FileInputStream fi = new FileInputStream(defaultFile); FileOutputStream fo = new FileOutputStream(file)) {
