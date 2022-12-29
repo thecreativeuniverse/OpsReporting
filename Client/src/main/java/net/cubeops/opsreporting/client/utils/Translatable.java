@@ -46,7 +46,7 @@ public class Translatable {
         if (!file.exists()) {
             try {
                 file.createNewFile();
-                String defFileName = String.format("lang%c%s", File.separatorChar, DEFAULT_LANG);
+                String defFileName = String.format("lang%c%s.yml", File.separatorChar, DEFAULT_LANG);
                 System.out.println(defFileName); //debugging
                 try (FileInputStream fi = new FileInputStream(OpsReportingClient.instance.getClass().getResource(defFileName).toString()); FileOutputStream fo = new FileOutputStream(file)) {
                     System.out.println("reading"); //debugging
