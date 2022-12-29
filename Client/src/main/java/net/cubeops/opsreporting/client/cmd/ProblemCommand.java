@@ -2,12 +2,15 @@ package net.cubeops.opsreporting.client.cmd;
 
 import net.cubeops.opsreporting.client.OpsReportingClient;
 import net.cubeops.opsreporting.client.send.ReportBuilder;
-import org.bukkit.ChatColor;
+import net.cubeops.opsreporting.client.utils.Translatable;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 
-public class ProblemCommand implements CommandExecutor {
+import java.util.List;
+
+public class ProblemCommand implements CommandExecutor, TabCompleter {
 
     private boolean alreadySent = false;
 
@@ -17,13 +20,20 @@ public class ProblemCommand implements CommandExecutor {
             return false;
         }
         if (alreadySent) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou can only send one problem report per server session."));
+            sender.sendMessage(Translatable.ERROR_ONE_PER_SESSION);
             return true;
         }
-        OpsReportingClient.info("Gathering info for a server problem report. A report will be sent to CubeOps shortly.");
+        OpsReportingClient.broadcastInfo(Translatable.INFO_GATHERING_DATA, OpsReportingClient.PERMISSION);
         ReportBuilder.gatherInfo(String.join(" ", args));
         alreadySent = true;
         return true;
     }
+
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        if (commandSender.hasPermission(OpsReportingClient.PERMISSION)) return List.of("<brief description of issue>");
+        else return null;
+    }
+
 
 }

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.lucko.spark.api.Spark;
 import net.cubeops.opsreporting.client.OpsReportingClient;
+import net.cubeops.opsreporting.client.utils.Translatable;
 import net.cubeops.opsreporting.report.Report;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -22,6 +23,8 @@ import java.util.Properties;
 public class ReportBuilder {
 
     private static final int SPARK_TIMEOUT = 600;
+    private static final int SUCCESS = 202;
+    private static final String SPARK_CLASS_NAME = "me.lucko.spark.api.Spark";
 
     public static void gatherInfo(String args) {
 
@@ -33,7 +36,7 @@ public class ReportBuilder {
             String diskUsage = getDiskUsage();
 
             try {
-                Class.forName("me.lucko.spark.api.Spark");
+                Class.forName(SPARK_CLASS_NAME);
                 RegisteredServiceProvider<Spark> provider = Bukkit.getServicesManager().getRegistration(Spark.class);
                 if (provider != null) {
                     run(() -> server.dispatchCommand(server.getConsoleSender(), String.format("spark sampler --timeout %d", SPARK_TIMEOUT)));
@@ -46,7 +49,7 @@ public class ReportBuilder {
                     return;
                 }
             } catch (ClassNotFoundException e) { //will throw this if spark is not loaded
-                OpsReportingClient.info("Spark plugin is not active. CubeOps problem report will be sent without certain information.");
+                OpsReportingClient.broadcastInfo(Translatable.INFO_SPARK_NOT_ACTIVE, OpsReportingClient.PERMISSION);
             }
             sendInfo(playerCount, null, null, null, memoryUsage, diskUsage, false, args);
         });
@@ -75,7 +78,7 @@ public class ReportBuilder {
             }
         }
         if (OpsReportingClient.KEY == null) {
-            OpsReportingClient.warn("No OpsReporting key provided. Please check config.yml");
+            OpsReportingClient.broadcastInfo(Translatable.ERROR_NO_KEY, OpsReportingClient.PERMISSION);
             return;
         }
 
@@ -106,10 +109,13 @@ public class ReportBuilder {
                 description
         );
 
-        OpsReportingClient.info("Sending server problem report to CubeOps...");
+        OpsReportingClient.broadcastInfo(Translatable.INFO_SENDING_REPORT, OpsReportingClient.PERMISSION);
         report.send().thenAcceptAsync(status -> {
-            if (status == 202) OpsReportingClient.info("Sent server problem report to CubeOps.");
-            else OpsReportingClient.warn("Unable to send server problem report to CubeOps.");
+            if (status == SUCCESS) {
+                OpsReportingClient.broadcastInfo(Translatable.SUCCESS_SENT_REPORT, OpsReportingClient.PERMISSION);
+            } else {
+                OpsReportingClient.broadcastWarning(String.format(Translatable.FAILED_REPORT_NOT_SENT, status), OpsReportingClient.PERMISSION);
+            }
         });
 
     }

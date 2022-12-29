@@ -1,0 +1,7 @@
+sending-report: "Sending server problem report to CubeOps..."
+sent-report: "Sent server problem report to CubeOps."
+failed-report-send: "Unable to send server problem report to CubeOps. Error Code: %d"
+gathering-data: "Gathering info for a server problem report. A report will be sent to CubeOps shortly."
+one-per-session: "&cYou can only send one problem report per server session."
+spark-not-active: "Spark plugin is not active. CubeOps problem report will be sent without certain information."
+no-key: "No OpsReporting key provided. Please check config.yml"
