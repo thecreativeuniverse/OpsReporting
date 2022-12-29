@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 public class OpsReportingClient extends JavaPlugin {
 
     public static String PERMISSION = "cubeops.serverproblem";
@@ -15,6 +17,7 @@ public class OpsReportingClient extends JavaPlugin {
     public static OpsReportingClient instance;
 
     public void onEnable() {
+        saveDefaultConfig();
         instance = this;
         UPTIME_START = System.currentTimeMillis();
         KEY = getConfig().getString("key");
@@ -51,5 +54,10 @@ public class OpsReportingClient extends JavaPlugin {
         }
     }
 
-
+    @Override
+    public void saveDefaultConfig() {
+        super.saveDefaultConfig();
+        File langFile = new File(getDataFolder(), "lang");
+        if (!langFile.exists()) langFile.mkdir();
+    }
 }

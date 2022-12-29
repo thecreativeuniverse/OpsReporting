@@ -1,5 +1,6 @@
 package net.cubeops.opsreporting.client.utils;
 
+import net.cubeops.opsreporting.client.OpsReportingClient;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -37,19 +38,23 @@ public class Translatable {
 
 
     private static File getFile(String fileName) {
-        return new File(String.format("plugins%clang%c%s.yml", File.separatorChar, File.separatorChar, fileName));
+        return new File(OpsReportingClient.instance.getDataFolder(), String.format("lang%c%s.yml", File.separatorChar, fileName));
     }
 
     private static File getDefaultFile() {
         File file = getFile(DEFAULT_LANG);
         if (!file.exists()) {
             try {
-                System.out.println(file.getAbsolutePath()); //debugging
                 file.createNewFile();
-                String defaultFile = String.format("%clang%c%s.yml", File.separatorChar, File.separatorChar, DEFAULT_LANG); //debugging
-                try (FileInputStream fi = new FileInputStream(defaultFile); FileOutputStream fo = new FileOutputStream(file)) {
+                String defFileName = String.format("lang%c%s", File.separatorChar, DEFAULT_LANG);
+                System.out.println(defFileName); //debugging
+                try (FileInputStream fi = new FileInputStream(OpsReportingClient.instance.getClass().getResource(defFileName).toString()); FileOutputStream fo = new FileOutputStream(file)) {
+                    System.out.println("reading"); //debugging
                     int i;
-                    while ((i = fi.read()) != -1) fo.write(i);
+                    while ((i = fi.read()) != -1) {
+                        System.out.println(i); //debugging
+                        fo.write(i);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
